@@ -1,0 +1,170 @@
+import 'package:flutter/material.dart';
+import 'package:taejai/models/project.dart';
+import 'package:intl/intl.dart';
+import 'package:taejai/pages/project/project_detail_page.dart';
+
+class ProjectListPage extends StatefulWidget {
+  const ProjectListPage({Key? key}) : super(key: key);
+
+  @override
+  State<ProjectListPage> createState() => _ProjectListPageState();
+}
+
+class _ProjectListPageState extends State<ProjectListPage> {
+  List<Project> projects = [
+    Project(
+      title: 'กองทุนส่งเสริมเขตอนุรักษ์ทะเลโดยชุมชนประมงพื้นบ้าน',
+      description:
+          'ร่วมเทใจให้ทะเลบ้านเรา สนับสนุนชุมชนประมงพื้นบ้านให้เป็นผู้เฝ้าระวัง ดูแล และฟื้นฟูธรรมชาติในทะเล',
+      targetAmount: 119350,
+      duration: 22,
+      receiveAmount: 10000,
+      donateCount: 13,
+      imageUrl: 'assets/images/P1.jpg'
+    ),
+    Project(
+      title: 'สูงวัยออนไลน์ด้วยรอยยิ้ม',
+      description:
+          'ร่วมสมทบทุน โครงการ สูงวัยออนไลน์ด้วยรอยยิ้ม โดยยังแฮปปี้ ธุรกิจเพื่อสังคมเพื่อผู้สูงอายุ ที่มุ่งส่งเสริมให้ผู้สูงอายุรู้สึก “สนุก มีคุณค่า และพึ่งพาตัวเองได้”',
+      targetAmount: 825000,
+      duration: 138,
+      receiveAmount: 40000,
+      donateCount: 8,
+      imageUrl: 'assets/images/P2.png',
+    ),
+    Project(
+      title: 'เก่าไม่ไหว ขอคู่ใหม่ให้หนูที',
+      description: 'มอบรองเท้านักเรียนคู่ใหม่ให้เด็กนักเรียนยากจนในโรงเรียนชนบท เพื่อป้องกันความเสี่ยงจากอุบัติเหตุ และโรคต่างๆที่เกิดจากการสวมใส่รองเท้านักเรียนที่มีสภาพเก่าขาดชำรุด',
+      targetAmount: 100000000,
+      duration: 320,
+      receiveAmount: 1000000,
+      donateCount: 28,
+      imageUrl: 'assets/images/P3.jpg',
+
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('เทใจ')),
+      body: ListView.builder(
+        itemCount: projects.length,
+        // Callback function
+        itemBuilder: (BuildContext context, int index) {
+          var project = projects[index];
+          var descriptionStyle = const TextStyle(
+            fontSize: 12.5,
+            color: Colors.black54,
+          );
+          var amountStyle = const TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black54,
+          );
+
+          var formatter = NumberFormat('#,###,000');
+          var target = formatter.format(project.targetAmount);
+          var percentText =((project.receiveAmount / project.targetAmount) *100).toStringAsFixed(0);
+          var percent = int.tryParse(percentText);
+          return Card(
+            child: InkWell(
+              onTap: () {
+                _handleClickProjectItem(projects[index]);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.network(
+                          project.imageUrl,
+                          width: 200.0,
+                          height: 200.0,
+                          fit: BoxFit.cover,
+                        ),
+                         //Container(
+                         // width:  60.0,
+                         // height: 60.0,
+                         // color: Colors.pink,
+                        const SizedBox(width: 10.0,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(project.title),
+                            const SizedBox(height: 8.0),
+                            Text(project.description, style: descriptionStyle),
+                          ],
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('เป้าหมาย', style: descriptionStyle),
+                            Text('$target บาท', style: amountStyle),
+                          ],
+                        ),
+                        Text('$percentText %', style: descriptionStyle),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: percent!,
+                          child: Container(
+                            height: 10.0,
+                            margin: EdgeInsets.symmetric(vertical: 5.0,horizontal: 0.0),
+                            color: Colors.orange,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 100 - percent,
+                          child: Container(
+                            height: 10.0,
+                            margin: EdgeInsets.symmetric(vertical: 5.0,horizontal: 0.0),
+                            color: Colors.grey[200],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('${project.duration} วัน', style: descriptionStyle),
+                        Row(
+                          children: [
+                            const Icon(Icons.person, size: 14.0),
+                            Text('${project.donateCount} %', style: descriptionStyle),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _handleClickProjectItem(Project p) {
+    print(p.title);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>  ProjectDetailsPage(project: p,)),
+    );
+  }
+}
